@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+
+</head>
+<body>
+  Enter the array of edges<input type="text" id="tbox" value="1,2,3,1,5" style="width:200px"/>
+  <br/>
+  <canvas id="out" width="500" height="250"
+    style="border:1px solid #c3c3c3;">
+  </canvas>
+
+
+  <script type="text/javascript">
+    var outEl = document.getElementById("out");
+    var ctx = outEl.getContext("2d");
+    // ctx.fillStyle = "#FF0000";
+    // ctx.fillRect(0,0,150,75);
+    var offset = 10;
+    var createEdge = function (ind, x) {
+      var xstart = offset + ind*40;
+      var ystart = 250-offset;
+      var xend = offset + ind*40;
+      var yend = 250-offset - x*40;
+      ctx.moveTo(xstart, ystart);
+      ctx.lineTo(xend, yend);
+      ctx.stroke();
+
+      ctx.font="20px Georgia";
+      ctx.fillText(x,xend,yend);
+    }
+
+    // var createBucket = function (x1, x2) {
+    //   var div = document.createElement("DIV");
+    //   outEl.appendChild(div);
+    // }
+
+    var valStr = document.getElementById("tbox").value;
+    var valStrs = valStr.split(",");
+    var vals = [];
+
+    for (var i = 0; i < valStrs.length; i++) {
+      vals[i] = Number(valStrs[i]);
+    }
+
+    for (var i = 0; i < vals.length; i++) {
+      createEdge(i, vals[i]);
+    }
+
+    (function computeCapacity(vals) {
+      var sum = 0;
+      var maxls = 0;
+      var maxlssum = 0;
+      var maxlsi = -1;
+
+      for (var i = 0; i < vals.length-1; i++) {
+        var ls = vals[i];
+        var rs = vals[i+1];
+        if(maxls < ls) {maxls = ls; maxlsi = i; maxlssum = 0;}
+
+        var minside = (ls < rs) ? ls : rs;
+        sum += minside;
+        maxlssum += minside;
+
+        var isRightMax = (ls < rs) ? true : false;
+        if (isRightMax) {
+          sum -= maxlssum;//(i-maxlsi+1)*ls;
+          var min = (maxls < rs)? maxls : rs;
+          maxlssum = (i - maxlsi+1)* min
+          sum += maxlssum;
+        }
+      }
+      ctx.fillText("answer is " + sum,0,50);
+    })(vals);
+
+
+  </script>
+</body>
+</html>
